@@ -1,0 +1,25 @@
+{
+  "name": "slackslashstash",
+  "version": "1.0.0",
+  "description": "Claudia based commands for Slack",
+  "scripts": {
+    "test": "claudia test-lambda"
+  },
+  "keywords": [
+    "slack",
+    "claudia",
+    "bot"
+  ],
+  "private": true,
+  "files": [
+    "movie.js",
+    "bot.js"
+  ],
+  "author": "Christopher 'Chief' Najewicz <chief@beefdisciple.com>",
+  "license": "MIT",
+  "dependencies": {
+    "claudia-bot-builder": "^1.2.0",
+    "lodash": "^4.13.1",
+    "request-promise": "^3.0.0"
+  }
+}
