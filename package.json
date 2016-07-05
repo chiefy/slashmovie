@@ -1,25 +1,28 @@
 {
-  "name": "slackslashstash",
+  "name": "slashmovie",
   "version": "1.0.0",
-  "description": "Claudia based commands for Slack",
+  "description": "Claudia based movie-lookup commands for Slack, Facebook and Telegram",
   "scripts": {
-    "test": "claudia test-lambda"
+    "test": "xo && ava"
   },
   "keywords": [
     "slack",
     "claudia",
-    "bot"
-  ],
-  "private": true,
-  "files": [
-    "movie.js",
-    "bot.js"
+    "bot",
+    "movie",
+    "facebook"
   ],
   "author": "Christopher 'Chief' Najewicz <chief@beefdisciple.com>",
   "license": "MIT",
   "dependencies": {
     "claudia-bot-builder": "^1.2.0",
     "lodash": "^4.13.1",
-    "request-promise": "^3.0.0"
+    "request-promise": "^3.0.0",
+    "themoviedbclient": "^0.1.3"
+  },
+  "devDependencies": {
+    "ava": "^0.15.2",
+    "mockery": "^1.7.0",
+    "xo": "^0.16.0"
   }
 }

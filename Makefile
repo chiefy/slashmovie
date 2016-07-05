@@ -1,21 +1,36 @@
 
-MODULE := bot
+MODULE ?= movie
+APIKEY ?= yourapikeygoeshere
 
-.PHONY: create destroy update-slack
+.PHONY: create destroy update-slack update
 
-create:
+node_modules:
+	@npm install
+
+lint: node_modules
+	@xo
+
+config.json:
+	@jq -n --arg val "$(APIKEY)" '{ "apikey": $$val }' > $@
+
+create: config.json
 	@claudia create \
 	--name $(MODULE) \
 	--config $(MODULE).json \
 	--region us-east-1 \
-	--timeout 5 \
+	--timeout 8 \
 	--api-module $(MODULE)
 
-update-slack:
+update-slack: config.json
 	@claudia update \
 	--config $(MODULE).json \
 	--configure-slack-slash-command
 
+update: config.json
+	@claudia update \
+	--config $(MODULE).json
+
 destroy:
 	@claudia destroy \
-	--config $(MODULE).json
+	--config $(MODULE).json &&\
+	rm $(MODULE).json
