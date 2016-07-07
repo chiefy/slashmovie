@@ -1,6 +1,6 @@
 
 MODULE ?= movie
-APIKEY ?= yourapikeygoeshere
+TMDB_API_KEY ?= yourapikeygoeshere
 
 .PHONY: create destroy update-slack update
 
@@ -11,7 +11,7 @@ lint: node_modules
 	@xo
 
 config.json:
-	@jq -n --arg val "$(APIKEY)" '{ "apikey": $$val }' > $@
+	@jq -n --arg val "$(TMDB_API_KEY)" '{ "apikey": $$val }' > $@
 
 create: config.json
 	@claudia create \
