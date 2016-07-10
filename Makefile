@@ -1,8 +1,9 @@
 
 MODULE ?= movie
+AWS_REGION ?= us-east-1
 TMDB_API_KEY ?= yourapikeygoeshere
 
-.PHONY: create destroy update-slack update
+.PHONY: create destroy update-slack update test clean
 
 node_modules:
 	@npm install
@@ -10,23 +11,23 @@ node_modules:
 lint: node_modules
 	@xo
 
-config.json:
-	@jq -n --arg val "$(TMDB_API_KEY)" '{ "apikey": $$val }' > $@
+config.js:
+	@echo 'module.exports = {\n  "apikey": "$(TMDB_API_KEY)"\n};' > $@
 
-create: config.json
+create: config.js
 	@claudia create \
 	--name $(MODULE) \
 	--config $(MODULE).json \
-	--region us-east-1 \
-	--timeout 8 \
+	--region $(AWS_REGION) \
+	--timeout 5 \
 	--api-module $(MODULE)
 
-update-slack: config.json
+update-slack: config.js
 	@claudia update \
 	--config $(MODULE).json \
 	--configure-slack-slash-command
 
-update: config.json
+update: config.js
 	@claudia update \
 	--config $(MODULE).json
 
@@ -34,3 +35,9 @@ destroy:
 	@claudia destroy \
 	--config $(MODULE).json &&\
 	rm $(MODULE).json
+
+test: node_modules
+	@npm run test
+
+clean:
+	@rm -rf node_modules config.js
