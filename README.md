@@ -10,14 +10,14 @@ Slashmovie is a project that leverages [claudiaJS](https://claudiajs.com/) and [
 If you would like to deploy this yourself, you will need the following:
 
   * A valid AWS account, with credentials that allow for AWS Lambda, AWS API Gateway and s3 access.
-  * The Movie Database API key (see-below)
+  * [The Movie Database API](https://developers.themoviedb.org/3/) key (see-below)
   * Slack slash command token
   * GNU Make
   * jq
   * npm
 
 ## TMDB API Key
-In order to deploy, you will need a [The Movie DB](https://www.themoviedb.org/) API key for looking up movie poster art. Along with TMDB, this project uses the free [Open Movie DB](http://omdbapi.com/) for general movie info lookup (no key required).
+In order to deploy, you will need a [The Movie DB](https://www.themoviedb.org/) API key for looking up movie data.
 
 To set your TMDB key:
 
