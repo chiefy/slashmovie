@@ -7,61 +7,74 @@ const path = require('path');
 const mockery = require('mockery');
 const _ = require('lodash');
 
-const gooniesData = fs.readFileSync(path.resolve('./mocks/goonies.json'), 'utf8');
-const gooniesJSON = JSON.parse(gooniesData);
+let tmdb;
 
-const setupMocks = () => {
-	mockery.registerMock('request-promise', () => {
-		return Promise.resolve(gooniesJSON);
-	});
-	mockery.registerMock('../lib/tmdb-client.js', {
-		getPoster: imdbId => {
-			return Promise.resolve(`http://imdb.com/poster/${imdbId}`);
+const searchData = fs.readFileSync(path.resolve('./mocks/search_results.json'), 'utf8');
+const searchJSON = JSON.parse(searchData);
+const movieData = fs.readFileSync(path.resolve('./mocks/fightclub.json'), 'utf8');
+const movieJSON = JSON.parse(movieData);
+
+mockery.registerMock('tmdbapi', () => {
+	return {
+		search: {
+			movie: () => {
+				return Promise.resolve(searchJSON);
+			}
+		},
+		movie: {
+			images: () => {
+				return Promise.resolve(imageJSON);
+			},
+			details: () => {
+				return Promise.resolve(movieJSON);
+			}	
 		}
-	});
-	const request = require('request-promise');
-	const tmdb = require('../lib/tmdb-client.js');
-	const movieRequest = require('../lib/movie-request.js')(request, tmdb);
-
-	return movieRequest({
-		text: 'goonies'
-	});
-};
+	};
+});
 
 test.before(() => {
 	mockery.enable({
-		warnOnReplace: false,
+		warnOnReplace: true,
 		warnOnUnregistered: false,
 		useCleanCache: true
 	});
+	tmdb = require('../lib/tmdb-client.js');
 });
 
-test('has attachments', t => {
-	return setupMocks()
-		.then(result => {
-			t.truthy(_.isArray(result.attachments), 'slash movie request exists');
-			t.is(result.attachments.length, 2, 'has two attachments');
-		});
+test('search movie', async t => {
+	t.plan(2);
+	const searchData = await tmdb.search('fight club');
+	t.true(_.isObject(searchData), 'slash movie search returns an object');
+	t.true(_.isArray(searchData.results), 'search results are an array');
 });
 
-test('has proper title', t => {
-	return setupMocks()
-		.then(result => {
-			const title = result.attachments[1].title;
-			t.is(title, 'The Goonies (1985)', 'has the correct title');
-		});
+test('get movie', async t => {
+	const movieData = await tmdb.get(424);
+	t.true(_.isObject(movieData), 'slash movie get returns a movie\'s details');
 });
 
-test('has fields', t => {
-	const MovieData = require('../lib/movie-data.js');
+test('get movie throws error', t => {
+	const fails1 = () => {
+		return tmdb.get('asdfsdf');
+	};
+	const fails2 = () => {
+		return tmdb.get(null);
+	};
+	t.throws(fails1(), TypeError, 'when integer not provided');
+	t.throws(fails2(), TypeError, 'when integer not provided');
+});
 
-	return setupMocks()
-		.then(result => {
-			const data = new MovieData(gooniesData);
-			const fields = result.attachments[1].fields;
-			t.truthy(_.isArray(fields), 'has the fields');
-			t.is(fields.length, data.fields.length);
-		});
+test('search throws error', t => {
+	t.throws((() => {
+		return tmdb.search();
+	})(), TypeError, 'when no title given');
+});
+
+test('find', async t => {
+	const findResults = await tmdb.find('fight club');
+	t.true(_.isObject(findResults), 'find returns a single movie result');
+	t.is(findResults.id, 550);
+	t.is(findResults.runtime, 139);
 });
 
 test.after(() => {
