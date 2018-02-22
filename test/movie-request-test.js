@@ -22,12 +22,9 @@ mockery.registerMock('tmdbapi', () => {
 			}
 		},
 		movie: {
-			images: () => {
-				return Promise.resolve(imageJSON);
-			},
 			details: () => {
 				return Promise.resolve(movieJSON);
-			}	
+			}
 		}
 	};
 });

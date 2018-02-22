@@ -25,6 +25,11 @@
     "xo": "^0.18.2"
   },
   "xo": {
-    "esnext": true
+    "esnext": true,
+    "rules": {
+      "object-curly-spacing": [
+        "warn"
+      ]
+    }
   }
 }
